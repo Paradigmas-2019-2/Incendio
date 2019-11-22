@@ -18,37 +18,11 @@ public class Informante extends Agent{
 	private MessageTemplate mt; // The template to receive replies
 	protected void setup() {
 //		addBehaviour(new InformacaoIncendio());
-		addBehaviour(new EnviaInformacao());
+		addBehaviour(new TrocaInformacao());
 		
 	}
 	
-	//Espera informação do incendio
-	private class InformacaoIncendio extends CyclicBehaviour{
-		public void action() {
-			
-			ACLMessage fogo = receive();
-			
-			if(fogo !=null) {
-				localIncendio = fogo.getContent();
-			}
-			else {
-				block();
-			}
-			
-		}
-		
-	}
-	
-//	private class  EnviaInform extends OneShotBehaviour{
-//		public void action() {
-//			ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
-//			
-//			mensagem.setContent("blalalal");
-//			mensagem.addReceiver(new AID("bombeiro",AID.ISLOCALNAME));
-//			myAgent.send(mensagem);
-//		}
-//	}
-	private class EnviaInformacao extends CyclicBehaviour{
+	private class TrocaInformacao extends CyclicBehaviour{
 		private int step = 0;
 		private MessageTemplate mt; // The template to receive replies
 
@@ -56,21 +30,36 @@ public class Informante extends Agent{
 
 			switch (step) {
 			case 0:
-				// Send the purchase order to the seller that provided the best offer
-				ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-				order.addReceiver(new AID("bombeiro",AID.ISLOCALNAME));
-				order.setContent("Qual o seu local?");
-				order.setConversationId("bombeiro");
-				order.setReplyWith("order"+System.currentTimeMillis());
-				myAgent.send(order);
-				// Prepare the template to get the purchase order reply
-				mt = MessageTemplate.and(MessageTemplate.MatchConversationId("bombeiro"),
-						MessageTemplate.MatchInReplyTo(order.getReplyWith()));
-				step = 1;
-				break;
-			case 1:      
-				// Receive the purchase order reply
+				// Espera a mensagem  com o local do incendio
+				ACLMessage mensagemIncendio = receive();
+				if(mensagemIncendio !=null) {
+					System.out.println("Incendio localizado!");
+					localIncendio = mensagemIncendio.getContent();
+					System.out.println(localIncendio);
+				  step = 1;
+				}
+				else {
+					block();	
+				}
 				
+				break;
+			
+			
+			case 1:
+				// Envia uma mensagem perguntando o local do bombeiro
+				ACLMessage msgBomb = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+				msgBomb.addReceiver(new AID("bombeiro",AID.ISLOCALNAME));
+				msgBomb.setContent("Qual sua distância até aqui?");
+				msgBomb.setConversationId("bombeiro");
+				msgBomb.setReplyWith("order"+System.currentTimeMillis());
+				myAgent.send(msgBomb);
+				// Prepare o modelo para obter a resposta do pedido
+				mt = MessageTemplate.and(MessageTemplate.MatchConversationId("bombeiro"),
+						MessageTemplate.MatchInReplyTo(msgBomb.getReplyWith()));
+				step = 2;
+				break;
+			case 2:      
+				//Esperando resposta do bombeiro
 				ACLMessage reply = myAgent.receive(mt);
 				if (reply != null) {
 					// Purchase order reply received
@@ -80,9 +69,8 @@ public class Informante extends Agent{
 						myAgent.doDelete();
 					}
 					else {
-						System.out.println("Attempt failed: requested book already sold.");
+						System.out.println("Falha na comunicação.");
 					}
-
 				}
 				else {
 					block();

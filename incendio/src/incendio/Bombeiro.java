@@ -51,32 +51,7 @@ public class Bombeiro extends Agent {
 		}
 		System.out.println("trabalho do "+getAID().getName()+" acabou.");
 	}
-	
-	//comportamento que espera a mensagem do informante
-	private class EsperaChamada extends CyclicBehaviour{
-		@Override
-		public void action() {
-			
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
-			ACLMessage msg = myAgent.receive(mt);
-			if (msg != null) {
-				// CFP Message received. Process it
-				String res = msg.getContent();
-				System.out.println("Mensagem: " +res);
-				
-				// Enviar resposta devolta para o informante
-				ACLMessage reply = msg.createReply();
-				reply.setContent(String.valueOf(meuLocal));
-				reply.setPerformative(ACLMessage.PROPOSE);
-				System.out.println("aaaa");
-				send(reply);
-			}
-			else {
-				block();
-			}
-		}
-		
-	}
+
 	
 	private class EnviaLocal extends CyclicBehaviour{
 		@Override
