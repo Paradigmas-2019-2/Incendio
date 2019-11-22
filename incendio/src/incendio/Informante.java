@@ -14,15 +14,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class Informante extends Agent{
-	public int localIncendio;
+	public String localIncendio;
 	public AID[] agentesBombeiro;
 	
 	private MessageTemplate mt; // The template to receive replies
 	protected void setup() {
-		Random aux = new Random();
-		// gerar local do incendio
-		localIncendio = (int)(aux.nextInt(45)+1);
-		
 //		addBehaviour(new InformacaoIncendio());
 		addBehaviour(new TrocaInformacao());
 		
@@ -40,7 +36,7 @@ public class Informante extends Agent{
 				ACLMessage mensagemIncendio = receive();
 				if(mensagemIncendio !=null) {
 					System.out.print("Incendio localizado no local: ");
-//					localIncendio = mensagemIncendio.getContent();
+					localIncendio = mensagemIncendio.getContent();
 					System.out.println(localIncendio);
 				  step = 1;
 				}

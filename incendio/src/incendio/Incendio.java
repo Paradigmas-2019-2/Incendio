@@ -1,5 +1,7 @@
 package incendio;
 
+import java.util.Random;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -12,7 +14,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class Incendio extends Agent{
-	protected void setup() {
+	private String local = "Taguatinga";
+	
+	protected void setup() { 
+		
 		addBehaviour(new Comunicacao());
 		
 	}
@@ -25,7 +30,7 @@ public class Incendio extends Agent{
 				System.out.println("Iniciando comunicação com o Informante(incendio - Informante)....");
 				try { Thread.sleep (500); } catch (InterruptedException ex) {}
 				ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
-				mensagem.setContent("Começou tudo");
+				mensagem.setContent(local);
 				mensagem.addReceiver(new AID("info",AID.ISLOCALNAME));
 				myAgent.send(mensagem);
 				step = 1;
