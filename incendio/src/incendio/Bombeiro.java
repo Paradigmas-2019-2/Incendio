@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class Bombeiro extends Agent {
 	
-	private int meuLocal; 
+	private int meuLocal, aux=0; 
 	@Override
 	protected void setup() {
 		Random aux = new Random();
@@ -35,13 +35,11 @@ public class Bombeiro extends Agent {
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+		addBehaviour(new ComunicacaoInformante());
+		addBehaviour(new ComunicacaoIncendio());
 		
-		//adicionando comportamento EsperaChamada		
-//		addBehaviour(new EsperaChamada());
-		addBehaviour(new EnviaLocal());
-		
-
 	}
+	
 	protected void takeDown() {
 		try {
 			DFService.deregister(this);
@@ -51,9 +49,31 @@ public class Bombeiro extends Agent {
 		}
 		System.out.println("trabalho do "+getAID().getName()+" acabou.");
 	}
+	
+	
+	
+	private class ComunicacaoIncendio extends CyclicBehaviour{
+		@Override
+		public void action() {
+			if(aux == 1) {
+				System.out.println("Iniciando comunicação com o incêndio....");
+				ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
+				mensagem.setContent("Qual a intensidade?");
+				mensagem.addReceiver(new AID("incend",AID.ISLOCALNAME));
+				myAgent.send(mensagem);
+				aux = 2;
+			}
+			else if (aux == 2) {
+				doDelete();
+			}
+			else{
+				block();
+			}
+		}
+	}
 
 	
-	private class EnviaLocal extends CyclicBehaviour{
+	private class ComunicacaoInformante extends CyclicBehaviour{
 		@Override
 		public void action() {
 			// Recebe mensagem pedindo local do bombeiro
@@ -71,11 +91,12 @@ public class Bombeiro extends Agent {
 					reply.setContent(auxiliar);
 				}
 				else {
-					// The requested book has been sold to another buyer in the meanwhile .
+					// Outro corpo de bombeiro foi escolhido.
 					reply.setPerformative(ACLMessage.FAILURE);
 					reply.setContent("Erro no local");
 				}
 				myAgent.send(reply);
+				aux = 1;
 			}
 			else {
 				block();
