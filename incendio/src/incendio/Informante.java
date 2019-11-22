@@ -1,5 +1,7 @@
 package incendio;
 
+import java.util.Random;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -12,11 +14,15 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class Informante extends Agent{
-	public String localIncendio;
+	public int localIncendio;
 	public AID[] agentesBombeiro;
 	
 	private MessageTemplate mt; // The template to receive replies
 	protected void setup() {
+		Random aux = new Random();
+		// gerar local do incendio
+		localIncendio = (int)(aux.nextInt(45)+1);
+		
 //		addBehaviour(new InformacaoIncendio());
 		addBehaviour(new TrocaInformacao());
 		
@@ -33,8 +39,8 @@ public class Informante extends Agent{
 				// Espera a mensagem  com o local do incendio
 				ACLMessage mensagemIncendio = receive();
 				if(mensagemIncendio !=null) {
-					System.out.println("Incendio localizado!");
-					localIncendio = mensagemIncendio.getContent();
+					System.out.print("Incendio localizado no local: ");
+//					localIncendio = mensagemIncendio.getContent();
 					System.out.println(localIncendio);
 				  step = 1;
 				}
