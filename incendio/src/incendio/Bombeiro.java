@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class Bombeiro extends Agent {
 	
-	private int meuLocal, aux=0; 
+	private int meuLocal, aux = 0, aux2 =0; 
 	@Override
 	protected void setup() {
 		Random aux = new Random();
@@ -56,14 +56,43 @@ public class Bombeiro extends Agent {
 		@Override
 		public void action() {
 			if(aux == 1) {
-				System.out.println("Averiguando o incêndio...");
-				ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
-				mensagem.setContent("Qual a intensidade?");
-				mensagem.addReceiver(new AID("incend",AID.ISLOCALNAME));
-				myAgent.send(mensagem);
-				aux = 2;
+				switch(aux2){
+
+					case 0:
+						System.out.println("Averiguando o incêndio...");
+						ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
+						mensagem.setContent("Qual a intensidade?");
+						mensagem.addReceiver(new AID("incend",AID.ISLOCALNAME));
+						myAgent.send(mensagem);
+						aux2 = 1;
+						break;
+					
+					case 1:
+						//Espera informação sobre a intencidade do incendio
+		
+						ACLMessage msg = receive();
+						if(msg != null ){
+							System.out.println("Intencidade do incêndio é: " + msg.getContent());
+							System.out.println("Deslocando viaturas...");
+							try { Thread.sleep (2000); } catch (InterruptedException ex) {}
+							
+							ACLMessage mensa = new ACLMessage(ACLMessage.INFORM);
+							mensa.setContent("E lá vai água...");
+							mensa.addReceiver(new AID("incend",AID.ISLOCALNAME));
+							myAgent.send(mensa);
+							
+							aux = 2;
+						}
+						else{
+							block();
+						}
+						break;
+				}
+				
 			}
 			else if (aux == 2) {
+				
+				try { Thread.sleep (20000); } catch (InterruptedException ex) {}
 				doDelete();
 			}
 			else{
@@ -98,6 +127,7 @@ public class Bombeiro extends Agent {
 				myAgent.send(reply);
 				try { Thread.sleep (500); } catch (InterruptedException ex) {}
 				aux = 1;
+
 			}
 			else {
 				block();

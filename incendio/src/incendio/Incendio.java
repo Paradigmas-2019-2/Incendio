@@ -47,9 +47,24 @@ public class Incendio extends Agent{
 				
 				ACLMessage mensagemBombeiro = receive();
 				if(mensagemBombeiro != null) {
-					System.out.println("Bombeiro->"+ mensagemBombeiro.getContent()+ "\n");
-					
-					System.out.println("FIMM"+ "\n");
+					System.out.println("Bombeiro: "+ mensagemBombeiro.getContent()+ "\n");
+					//Respondendo ao bombeiro
+					ACLMessage mens = new ACLMessage(ACLMessage.INFORM);
+					mens.setContent("É mais de 8 mil");
+					mens.addReceiver(new AID("bombeiro",AID.ISLOCALNAME));
+					myAgent.send(mens);
+					step = 2;
+				}
+				else {
+					block();
+				}
+				break;
+			case 2:
+				ACLMessage mensagemFim = receive();
+				if(mensagemFim != null) {
+					System.out.println("Bombeiro: "+ mensagemFim.getContent());
+					try { Thread.sleep (15000); } catch (InterruptedException ex) {}
+					System.out.println("O incêndio foi controlado!!!");
 					doDelete();
 				}
 				else {
