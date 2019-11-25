@@ -16,15 +16,3 @@
 
 Diagrama contendo funcionamento do projeto :
 
-```mermaid
-graph LR
-
-A((Incêndio)) 
-B((Bombeiro))
-C((Informante))
-A  -- 1. Envia local incêndio --> C
-C  -- 3. envia informação incêndio --> B
-B  -- 2. Envia local bombeiro --> C
-B  -- 6. Apaga incêndio --> A
-A  -- 5. Recebe intensidade --> B
-B  -- 4. Pergunta intensidade--> A
