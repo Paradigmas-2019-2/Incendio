@@ -56,7 +56,7 @@ public class Bombeiro extends Agent {
 		@Override
 		public void action() {
 			if(aux == 1) {
-				System.out.println("Iniciando comunicação com o incêndio....");
+				System.out.println("Averiguando o incêndio...");
 				ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
 				mensagem.setContent("Qual a intensidade?");
 				mensagem.addReceiver(new AID("incend",AID.ISLOCALNAME));
@@ -87,15 +87,16 @@ public class Bombeiro extends Agent {
 				
 				if (auxiliar != null) {
 					reply.setPerformative(ACLMessage.INFORM);
-					System.out.println("Enviando local");
+					System.out.println("Enviando local...");
 					reply.setContent(auxiliar);
 				}
 				else {
 					// Outro corpo de bombeiro foi escolhido.
 					reply.setPerformative(ACLMessage.FAILURE);
-					reply.setContent("Erro no local");
+					reply.setContent("Erro no local \n");
 				}
 				myAgent.send(reply);
+				try { Thread.sleep (500); } catch (InterruptedException ex) {}
 				aux = 1;
 			}
 			else {

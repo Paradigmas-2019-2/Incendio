@@ -1,5 +1,6 @@
 package incendio;
 
+import javax.swing.JOptionPane;
 import java.util.Random;
 
 import jade.core.AID;
@@ -14,7 +15,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class Incendio extends Agent{
-	private String local = "Taguatinga";
+	private String local = "";
 	
 	protected void setup() { 
 		
@@ -27,22 +28,28 @@ public class Incendio extends Agent{
 		public void action() {
 			switch (step) {
 			case 0:
-				System.out.println("Iniciando comunicação com o Informante(incendio - Informante)....");
+				String entrada = JOptionPane.showInputDialog("Local do incêndio: ");
+				System.out.println("O incêndio iniciou em: " + entrada + "\n");
+				// System.out.println("");
+
+				local = entrada;
+
+				System.out.println("Iniciando comunicação com o Informante(Incendio->Informante)...");
 				try { Thread.sleep (500); } catch (InterruptedException ex) {}
 				ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
 				mensagem.setContent(local);
 				mensagem.addReceiver(new AID("info",AID.ISLOCALNAME));
 				myAgent.send(mensagem);
 				step = 1;
-				
 				break;
 
 			case 1:
 				
 				ACLMessage mensagemBombeiro = receive();
 				if(mensagemBombeiro != null) {
-					System.out.println("Bombeiro->"+ mensagemBombeiro.getContent());
-					System.out.println("FIMM");
+					System.out.println("Bombeiro->"+ mensagemBombeiro.getContent()+ "\n");
+					
+					System.out.println("FIMM"+ "\n");
 					doDelete();
 				}
 				else {

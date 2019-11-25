@@ -51,7 +51,9 @@ public class Informante extends Agent{
 				// Envia uma mensagem perguntando o local do bombeiro
 				ACLMessage msgBomb = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 				msgBomb.addReceiver(new AID("bombeiro",AID.ISLOCALNAME));
-				msgBomb.setContent("Qual sua distância até aqui?");
+				System.out.println("");
+				msgBomb.setContent("Qual sua distância até aqui? ");
+				System.out.println("");
 				msgBomb.setConversationId("bombeiro");
 				msgBomb.setReplyWith("order"+System.currentTimeMillis());
 				myAgent.send(msgBomb);
@@ -67,7 +69,7 @@ public class Informante extends Agent{
 					// Purchase order reply received
 					if (reply.getPerformative() == ACLMessage.INFORM) {
 						// Purchase successful. We can terminate
-						System.out.println("Bombeiro local: "+reply.getContent());
+						System.out.println("Bombeiro: Estamos à " +reply.getContent()+ " KM do incêndio\n" );
 						myAgent.doDelete();
 					}
 					else {
