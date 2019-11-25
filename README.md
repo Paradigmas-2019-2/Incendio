@@ -16,3 +16,4 @@
 
 Diagrama contendo funcionamento do projeto :
 
+<img  src="./img/diagrama/diagrama.jpg">
